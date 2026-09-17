@@ -7,12 +7,15 @@
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
 A deep learning-based **Human Action Recognition** system that uses a Convolutional Neural Network (CNN) for spatial feature extraction and a Bidirectional LSTM (BiLSTM) for temporal sequence learning.
+\
+
+---
 
 ## Overview
 
-This project implements a video-based action recognition system using **MobileNetV2**, a CNN architecture, as the primary feature extractor.
+This project implements a video-based **Human Action Recognition** system using **MobileNetV2**, a Convolutional Neural Network architecture, as the primary spatial feature extractor.
 
-The system processes video sequences by extracting and preprocessing frames, using MobileNetV2 to learn spatial features from individual frames, and then using a Bidirectional LSTM to learn temporal relationships between frames.
+The system processes video sequences by extracting frames, preprocessing them, and using MobileNetV2 to learn spatial features from individual frames. These features are then passed to a **Bidirectional LSTM** to learn temporal relationships across the video sequence.
 
 The model classifies videos into three categories:
 
@@ -20,27 +23,35 @@ The model classifies videos into three categories:
 * **Fighing**
 * **Road_acc**
 
-The project includes video preprocessing, CNN-based feature extraction, temporal sequence learning, model training, evaluation, and video prediction.
+The project demonstrates an end-to-end deep learning workflow covering:
+
+* Video preprocessing
+* Frame extraction
+* CNN-based feature extraction
+* Temporal sequence learning
+* Model training
+* Model evaluation
+* Video prediction
 
 ---
 
-## Features
+## Key Features
 
-* CNN-based video classification
+* CNN-based Human Action Recognition
 * MobileNetV2 feature extraction
 * Video frame extraction using OpenCV
 * Image resizing and normalization
 * Temporal sequence learning using BiLSTM
-* Multi-class action classification
-* Model evaluation
+* Multi-class video classification
+* Model evaluation using classification metrics
 * Input video prediction
 * Jupyter Notebook implementation
 
 ---
 
-## CNN-Based Architecture
+## Model Architecture
 
-The main deep learning pipeline is:
+The overall architecture is:
 
 ```text
 Input Video
@@ -49,8 +60,7 @@ Input Video
 Frame Extraction
      │
      ▼
-Resize Frames
-128 × 128 × 3
+Resize to 128 × 128
      │
      ▼
 Normalization
@@ -68,31 +78,27 @@ Bidirectional LSTM
 Fully Connected Layers
      │
      ▼
-Softmax
+Softmax Classification
      │
      ▼
-3 Action Classes
+Explosion / Fighing / Road_acc
 ```
 
 ### MobileNetV2 CNN
 
-**MobileNetV2** is used as the CNN backbone for extracting spatial features from video frames.
+**MobileNetV2** is used as the main CNN backbone for extracting spatial features from individual video frames.
 
 Configuration:
 
-* Architecture: MobileNetV2
-* Pretrained weights: ImageNet
+* Architecture: **MobileNetV2**
+* Pretrained weights: **ImageNet**
 * Input size: **128 × 128 × 3**
-* CNN layers: Last 40 layers configured as trainable
-* Output: Spatial feature representation
-
-The CNN processes individual frames and extracts meaningful visual features that are subsequently used by the temporal model.
+* Last 40 layers configured as trainable
+* Used for spatial feature extraction
 
 ### Bidirectional LSTM
 
-The CNN features extracted from consecutive frames are passed to a **Bidirectional LSTM**.
-
-The BiLSTM learns temporal dependencies and motion patterns across the sequence of frames.
+The frame-level CNN features are passed to a **Bidirectional LSTM** to learn temporal dependencies and motion patterns across consecutive frames.
 
 Configuration:
 
@@ -100,33 +106,33 @@ Configuration:
 * LSTM units: **32**
 * Bidirectional processing
 
-### Fully Connected Classification Network
+### Classification Network
 
 The BiLSTM output is passed through fully connected layers:
 
 ```text
 BiLSTM
    ↓
-Dense 256
+Dense(256)
    ↓
-Dense 128
+Dense(128)
    ↓
-Dense 64
+Dense(64)
    ↓
-Dense 32
+Dense(32)
    ↓
-Dense 3
+Dense(3)
    ↓
 Softmax
 ```
 
-Dropout layers are used between the dense layers.
+Dropout layers are applied between the dense layers.
 
 ---
 
 ## Dataset
 
-The dataset is organized into three action classes:
+The expected dataset structure is:
 
 ```text
 data/
@@ -136,9 +142,17 @@ data/
     └── Road_acc/
 ```
 
+### Classes
+
+| Class     | Description                    |
+| --------- | ------------------------------ |
+| Explosion | Explosion-related activity     |
+| Fighing   | Fighting-related activity      |
+| Road_acc  | Road accident-related activity |
+
 ### Frame Processing
 
-Each input video goes through the following preprocessing pipeline:
+Each video goes through the following preprocessing pipeline:
 
 1. Open the video using OpenCV.
 2. Determine the number of frames.
@@ -148,7 +162,7 @@ Each input video goes through the following preprocessing pipeline:
 6. Normalize pixel values by dividing by 255.
 7. Create the input sequence for the CNN-BiLSTM model.
 
-> The dataset itself is not included in this repository. The dataset directories are retained using `.gitkeep` files to document the expected structure.
+> **Note:** The dataset is not included in this repository. The dataset directories are retained using `.gitkeep` files to document the expected structure.
 
 ---
 
@@ -173,9 +187,47 @@ Each input video goes through the following preprocessing pipeline:
 
 ---
 
+## Project Workflow
+
+```text
+Dataset
+   │
+   ▼
+Video Input
+   │
+   ▼
+Frame Extraction
+   │
+   ▼
+Frame Resizing
+   │
+   ▼
+Normalization
+   │
+   ▼
+MobileNetV2 CNN
+   │
+   ▼
+Spatial Feature Extraction
+   │
+   ▼
+Bidirectional LSTM
+   │
+   ▼
+Dense Layers
+   │
+   ▼
+Softmax Classification
+   │
+   ▼
+Action Prediction
+```
+
+---
+
 ## Evaluation
 
-The trained model can be evaluated using:
+The project includes an evaluation script that calculates:
 
 * Accuracy
 * Precision
@@ -188,7 +240,7 @@ Run:
 python -m src.evaluate
 ```
 
-The evaluation script uses the generated feature and label artifacts together with the trained model.
+The evaluation uses the generated feature and label artifacts together with the trained model.
 
 ---
 
@@ -208,7 +260,7 @@ Example:
 python -m src.predict test_videos/input.mp4
 ```
 
-The processed video is saved as:
+The processed output video is saved as:
 
 ```text
 test_videos/Output-Test-Video.mp4
@@ -274,46 +326,52 @@ Deep-Learning-Human-Action-Recognition/
 * **MobileNetV2**
 * **OpenCV**
 * **NumPy**
+* **Pandas**
 * **Scikit-learn**
 * **Matplotlib**
-* **Pandas**
 * **Jupyter Notebook**
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/harshaldhande/Deep-Learning-Human-Action-Recognition.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd Deep-Learning-Human-Action-Recognition
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
 ## Training
 
-After placing the dataset according to the required directory structure, start training using:
+After placing the dataset in the required directory structure, start the training pipeline using:
 
 ```bash
 python run.py train
 ```
 
-The training pipeline:
+The training pipeline generates the required feature and label artifacts and saves the trained model.
 
-```text
-Dataset
-   ↓
-Frame Extraction
-   ↓
-Preprocessing
-   ↓
-CNN Feature Extraction
-   ↓
-BiLSTM
-   ↓
-Classification
-   ↓
-Model Saving
-```
-
-Generated artifacts are stored under:
+Generated artifacts:
 
 ```text
 artifacts/
 ```
 
-The trained model is stored under:
+Saved model:
 
 ```text
 saved_models/
@@ -323,28 +381,46 @@ saved_models/
 
 ## Notebook
 
-The complete experimental implementation is available in:
+The complete experimental workflow is available in:
 
 ```text
 notebooks/Human_Action_Recognition.ipynb
 ```
 
-The notebook contains the project's experimentation and deep learning workflow.
+The notebook contains the project's experimentation, preprocessing, model development, training, and evaluation workflow.
 
 ---
 
 ## Research
 
-This project focuses on applying deep learning techniques to **video-based human action recognition**, with a CNN-based approach for extracting spatial information from video frames and recurrent neural networks for learning temporal information.
+This project focuses on deep learning-based **video action recognition**, using a CNN-based approach to extract spatial information from video frames and a Bidirectional LSTM to learn temporal information.
+
+The combination of **MobileNetV2 and BiLSTM** allows the system to utilize both spatial and temporal information present in video sequences.
 
 ---
 
 ## Author
 
-**Harshal Dhande**
+### Harshal Dhande
 
-B.Tech – Electronics & Telecommunication Engineering
+**Post Graduate Diploma in Computing – IT Infrastructure, Systems and Security (PGCP-ITISS)**
+Centre for Development of Advanced Computing (**C-DAC**)
+
+**B.Tech – Electronics & Telecommunication Engineering**
 Vishwakarma Institute of Technology, Pune
+
+### Areas of Interest
+
+* DevOps
+* DevSecOps
+* Kubernetes
+* Cloud Computing
+* CI/CD
+* Linux
+* Infrastructure Automation
+* Container Security
+* Machine Learning
+* Deep Learning
 
 ---
 
